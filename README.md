@@ -33,3 +33,7 @@ Anything can be changed if you think it's needed, including the gemfile, databas
 Run `bundle install` and `rake db:migrate`.
 
 You can populate your database with fake data by running `rake db:seed`.
+
+# Assumptions
+ * Probably want to destroy all photos associated with an album if an album is destroyed
+ * Not storing actual images, just URLs
