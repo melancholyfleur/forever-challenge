@@ -37,3 +37,4 @@ You can populate your database with fake data by running `rake db:seed`.
 # Assumptions
  * Probably want to destroy all photos associated with an album if an album is destroyed
  * Not storing actual images, just URLs
+ * I'm assuming we don't need full api endpoints with an `/api` route, etc. Just writing out the controller actions and routes as though it's an app, but only renders JSON.
