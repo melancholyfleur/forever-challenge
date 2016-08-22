@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe AlbumsController, type: :controller do
   describe "index" do
     before(:each) do
-      20.times do |index|
-        Album.create(name: Faker::Lorem.word.capitalize, position: index)
+      20.times do
+        Album.create(name: Faker::Lorem.word.capitalize)
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe AlbumsController, type: :controller do
 
   describe "show" do
     before(:each) do
-      album = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+      album = Album.create(name: Faker::Lorem.word.capitalize)
       2.times do |photo_index|
         album.photos.create(
           name: Faker::Lorem.word.capitalize,
@@ -62,7 +62,7 @@ RSpec.describe AlbumsController, type: :controller do
 
   describe "update" do
     before(:each) do
-      @album = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+      @album = Album.create(name: Faker::Lorem.word.capitalize)
     end
 
     it "updates name attribute" do
@@ -80,8 +80,8 @@ RSpec.describe AlbumsController, type: :controller do
 
   describe "destroy" do
     it "removes existing album" do
-      album = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
-      album2 = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+      album = Album.create(name: Faker::Lorem.word.capitalize)
+      album2 = Album.create(name: Faker::Lorem.word.capitalize)
       album_count = Album.count
       delete :destroy, id: album.id
       expect(response.status).to eq 200

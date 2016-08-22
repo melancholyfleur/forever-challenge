@@ -18,8 +18,7 @@ RSpec.describe Photo, type: :model do
   end
 
   it "requires an album association" do
-    pending "Not sure how to test this now that another validation basically depends on this one; Maybe raise a validation error in that method?"
-    expect(Photo.new(name: "Great Photo Name", url: "http://example.com/photo.jpg")).to_not be_valid
+    expect(Photo.new(name: "Great Photo Name", url: "http://example.com/photo.jpg", album: @album)).to be_valid
   end
 
   it "limits the amount of photos associated with an album" do

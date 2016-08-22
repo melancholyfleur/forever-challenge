@@ -38,3 +38,6 @@ You can populate your database with fake data by running `rake db:seed`.
  * Probably want to destroy all photos associated with an album if an album is destroyed
  * Not storing actual images, just URLs
  * I'm assuming we don't need full api endpoints with an `/api` route, etc. Just writing out the controller actions and routes as though it's an app, but only renders JSON.
+ * I did not add a test for the #show action of the photos controller because there weren't any requirements around it aside from showing the photo, which is silly to test.
+ * It seems to me that the "position" attribute on album is entirely unused, so I am going to ignore it.
+ * As much as we're allowing the API to _add_ multiple photos at a time, I am assuming we are still only destroying one at a time.
