@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   scope 'albums' do
     get '/' => 'albums#index'
     post '/' => 'albums#create'
-    scope '/:name' do
+    scope '/:id' do
       get '/' => 'albums#show'
       put '/' => 'albums#update'
       delete '/' => 'albums#destroy'

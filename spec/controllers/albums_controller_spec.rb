@@ -20,7 +20,7 @@ RSpec.describe AlbumsController, type: :controller do
     end
 
     it "shows the total number of albums" do
-      get :index, page: 3
+      get :index, page: 2
       expect(JSON.parse(response.body)['total']).to eq 20
     end
   end
@@ -39,10 +39,53 @@ RSpec.describe AlbumsController, type: :controller do
     end
 
     it "shows all photo data for the album" do
-      album_name = Album.first.name
-      get :show, name: album_name
+      get :show, id: Album.first.id
       photos_json = JSON.parse(response.body)['photos']
       expect(photos_json.count).to eq 2
+    end
+  end
+
+  describe "create" do
+    it "creates an album with the correct parameters" do
+      valid_params = {album: {name: "The Dude Abides"}}
+      post :create, valid_params
+      expect(Album.first.name).to eq "The Dude Abides"
+    end
+
+    it "does not create an album if not all parameters are provided" do
+      invalid_params = {album: {name: ""}}
+      post :create, invalid_params
+      expect(Album.first).to be nil
+      expect(response.body).to include "error"
+    end
+  end
+
+  describe "update" do
+    before(:each) do
+      @album = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+    end
+
+    it "updates name attribute" do
+      valid_params = {id: @album.id, album: { name: "The Dude Abides"}}
+      post :update, valid_params
+      expect(Album.first.name).to eq "The Dude Abides"
+    end
+
+    it "does not update name attribute if parameter is blank" do
+      invalid_params = {id: @album.id, album:{ name: ""}}
+      put :update, invalid_params
+      expect(response.body).to include "error"
+    end
+  end
+
+  describe "destroy" do
+    it "removes existing album" do
+      album = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+      album2 = Album.create(name: Faker::Lorem.word.capitalize, position: 1)
+      album_count = Album.count
+      delete :destroy, id: album.id
+      expect(response.status).to eq 200
+      expect(Album.count).to eq album_count-1
     end
   end
 end

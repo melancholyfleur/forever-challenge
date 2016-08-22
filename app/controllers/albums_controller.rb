@@ -6,7 +6,7 @@ class AlbumsController < ApplicationController
   end
 
   def show
-    @album = Album.find_by_name(params[:name])
+    @album = Album.find(params[:id])
     unless @album
       render json: {}, status: :not_found, layout: false
     else
@@ -16,11 +16,36 @@ class AlbumsController < ApplicationController
   end
 
   def create
+    @album = Album.new(album_params)
+    if @album.valid?
+      @album.save
+      render json: {album: @album}, status: :ok, layout: false
+    else
+      render json: {album: nil, error: @album.errors.messages}, status: :ok, layout: false
+    end
   end
 
   def update
+    @album = Album.update(params[:id], album_params)
+    if @album.valid?
+      @album.save
+      render json: {album: @album}, status: :ok, layout: false
+    else
+      render json: {album: nil, error: @album.errors.messages}, status: :ok, layout: false
+    end
   end
 
   def destroy
+    @album = Album.find(params[:id])
+    if @album
+      @album.destroy
+      render json: {album: @album}, status: :ok, layout: false
+    end
+  end
+
+  private
+
+  def album_params
+    params.require(:album).permit(:id, :name)
   end
 end
