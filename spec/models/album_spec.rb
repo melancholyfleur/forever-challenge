@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Album, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "requires a name" do
+    expect(Album.new(name: "")).to_not be_valid
+  end
 end
