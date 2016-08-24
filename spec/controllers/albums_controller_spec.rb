@@ -28,7 +28,7 @@ RSpec.describe AlbumsController, type: :controller do
   describe "show" do
     before(:each) do
       album = Album.create(name: Faker::Lorem.word.capitalize)
-      2.times do |photo_index|
+      2.times do
         album.photos.create(
           name: Faker::Lorem.word.capitalize,
           description: Faker::Lorem.sentence,
@@ -36,12 +36,22 @@ RSpec.describe AlbumsController, type: :controller do
           taken_at: Time.now - rand(100).days
         )
       end
+      2.times do
+        album.videos.create(
+          name: Faker::Lorem.word.capitalize,
+          description: Faker::Lorem.sentence,
+          url: Faker::File.file_name(SecureRandom.hex, 'mp4'),
+          taken_at: Time.now - rand(100).days
+        )
+      end
     end
 
-    it "shows all photo data for the album" do
+    it "shows all photo and video data for the album" do
       get :show, id: Album.first.id
       photos_json = JSON.parse(response.body)['photos']
+      videos_json = JSON.parse(response.body)['videos']
       expect(photos_json.count).to eq 2
+      expect(videos_json.count).to eq 2
     end
   end
 

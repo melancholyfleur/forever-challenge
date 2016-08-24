@@ -11,7 +11,8 @@ class AlbumsController < ApplicationController
       render json: {}, status: :not_found, layout: false
     else
       @photos = @album.photos
-      render json: {album: @album, photos: @photos}, status: :ok, layout: false
+      @videos = @album.videos
+      render json: {album: @album, photos: @photos, videos: @videos}, status: :ok, layout: false
     end
   end
 
