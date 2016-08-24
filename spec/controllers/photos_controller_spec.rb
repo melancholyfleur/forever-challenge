@@ -34,14 +34,16 @@ RSpec.describe PhotosController, type: :controller do
   describe "create" do
     before(:each) do
       @album = Album.create(name: "LOLALBUM")
+      @prev_date = @album.average_date
     end
 
     it "creates a photo with the correct parameters" do
-      valid_params = {photos: [{name: "Super Duper", url: "http://placekitten.com/derp.jpg", album_id: @album.id}]}
+      valid_params = {photos: [{name: "Super Duper", url: "http://placekitten.com/derp.jpg", album_id: @album.id, taken_at: Time.now - rand(100).days}]}
       post :create, valid_params
-      expect(Photo.first.name).to eq "Super Duper"
+      expect(Photo.last.name).to eq "Super Duper"
       expect(JSON.parse(response.body)['photos']).to_not be nil
       expect(JSON.parse(response.body)['errors']).to be_empty
+      expect(@album.reload.average_date).not_to eql @prev_date
     end
 
     it "does not create a photo if not all parameters are present" do
@@ -49,6 +51,7 @@ RSpec.describe PhotosController, type: :controller do
       post :create, invalid_params
       expect(Photo.first).to be nil
       expect(JSON.parse(response.body)['errors']).to_not be_empty
+      expect(@album.reload.average_date).to eql @prev_date
     end
 
     it "adds multiple photos to an album at one time" do
@@ -87,6 +90,7 @@ RSpec.describe PhotosController, type: :controller do
       }
       post :create, multiple_photo_params
       expect(@album.photos.count).to eq 6
+      expect(@album.reload.average_date).not_to eql @prev_date
     end
 
     it "adds all photos with valid json, but not photos with invalid json" do
@@ -117,6 +121,7 @@ RSpec.describe PhotosController, type: :controller do
   describe "update" do
     before(:each) do
       @album = Album.create(name: Faker::Lorem.word.capitalize)
+      @prev_date = @album.average_date
       @photo = @album.photos.create(
         name: Faker::Lorem.word.capitalize, 
         url: Faker::Avatar.image(SecureRandom.hex, '50x50', 'jpg'),
@@ -130,6 +135,7 @@ RSpec.describe PhotosController, type: :controller do
       expect(Photo.first.name).to eq "The Dude Abides"
       expect(JSON.parse(response.body)['photo']).to_not be nil
       expect(JSON.parse(response.body)['error']).to be nil
+      expect(@album.reload.average_date).not_to eql @prev_date
     end
 
     it "does not update name attribute if parameter is blank" do
@@ -137,12 +143,14 @@ RSpec.describe PhotosController, type: :controller do
       put :update, invalid_params
       expect(JSON.parse(response.body)['photo']).to be nil
       expect(JSON.parse(response.body)['error']).to_not be nil
+      expect(@album.reload.average_date).to eql @prev_date
     end
   end
 
   describe "destroy" do
     it "removes existing album" do
       album = Album.create(name: Faker::Lorem.word.capitalize)
+      prev_date = album.average_date
       photo = album.photos.create(
         name: Faker::Lorem.word.capitalize,
         description: Faker::Lorem.sentence,
@@ -159,6 +167,7 @@ RSpec.describe PhotosController, type: :controller do
       delete :destroy, id: photo.id
       expect(response.status).to eq 200
       expect(Photo.count).to eq photo_count-1
+      expect(album.reload.average_date).not_to eql prev_date
     end
   end
 end

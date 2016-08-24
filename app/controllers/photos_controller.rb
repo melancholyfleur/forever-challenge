@@ -19,8 +19,11 @@ class PhotosController < ApplicationController
     errors = []
     create_params.each do |photo_param|
       @photo = Photo.new(photo_param)
+      album = Album.find(photo_param[:album_id])
       if @photo.valid?
-        @photo.save
+        @photo.save!
+        ads = AverageDateService.new({album: album, media: album.photos})
+        album = ads.calculate_average_date
         photos << @photo
       else
         errors << @photo.errors.messages
@@ -34,6 +37,8 @@ class PhotosController < ApplicationController
     @photo = Photo.update(params[:id], update_params)
     if @photo.valid?
       @photo.save
+      ads = AverageDateService.new({album: @photo.album, media: @photo.album.photos})
+      ads.calculate_average_date
       render json: {photo: @photo}, status: :ok, layout: false
     else
       render json: {photo: nil, error: @photo.errors.messages}, status: :ok, layout: false
@@ -44,6 +49,8 @@ class PhotosController < ApplicationController
     @photo = Photo.find(params[:id])
     if @photo
       @photo.destroy
+      ads = AverageDateService.new({album: @photo.album, media: @photo.album.photos})
+      ads.calculate_average_date
       render json: {photo: @photo}, status: :ok, layout: false
     end
   end

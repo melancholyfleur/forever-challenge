@@ -45,3 +45,5 @@ You can populate your database with fake data by running `rake db:seed`.
 # Things I might do differently with more time
 * the way that I validate <= 60 photos per album couples it with the validation for album association. I might put an actual attribute on the Album itself that is "photo limit" (that way it could be changed later too) and it would not require a `photo.album.photos` call to find the count because the check would be on Album instead of Photo
 * the way to get photos to be added to multiple albums involves "permit `id: []` "
+* Create a status OpenStruct in the AverageDate service and return it and then log it
+* Could allow the "AverageDateService" to calculate for videos as well (maybe photos _and_ videos are used to calculate average date)
