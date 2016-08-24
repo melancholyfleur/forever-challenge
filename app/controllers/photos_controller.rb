@@ -1,4 +1,5 @@
 class PhotosController < ApplicationController
+  before_action :set_photo, only: [:show, :destroy]
   def index
     @photos = Photo.order(:name).page params[:page]
     @total = Photo.count
@@ -6,7 +7,6 @@ class PhotosController < ApplicationController
   end
 
   def show
-    @photo = Photo.find(params[:id])
     unless @photo
       render json: {}, status: :not_found, layout: false
     else
@@ -23,7 +23,7 @@ class PhotosController < ApplicationController
       if @photo.valid?
         @photo.save!
         ads = AverageDateService.new({album: album, media: album.photos})
-        album = ads.calculate_average_date
+        ads.calculate_average_date
         photos << @photo
       else
         errors << @photo.errors.messages
@@ -46,7 +46,6 @@ class PhotosController < ApplicationController
   end
 
   def destroy
-    @photo = Photo.find(params[:id])
     if @photo
       @photo.destroy
       ads = AverageDateService.new({album: @photo.album, media: @photo.album.photos})
@@ -56,6 +55,9 @@ class PhotosController < ApplicationController
   end
 
   private
+  def set_photo
+    @photo = Photo.find(params[:id])
+  end
 
   def update_params
     params.require(:photo).permit(:name, :url, :album_id, :description, :taken_at)
