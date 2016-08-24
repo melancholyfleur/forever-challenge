@@ -41,9 +41,11 @@ You can populate your database with fake data by running `rake db:seed`.
  * I did not add a test for the #show action of the photos controller because there weren't any requirements around it aside from showing the photo, which is silly to test.
  * It seems to me that the "position" attribute on album is entirely unused, so I am going to ignore it.
  * As much as we're allowing the API to _add_ multiple photos at a time, I am assuming we are still only updating and destroying one at a time.
+ * Since the requirement is to add new videos, I will assume we don't need to update them.
 
 # Things I might do differently with more time
-* the way that I validate <= 60 photos per album couples it with the validation for album association. I might put an actual attribute on the Album itself that is "photo limit" (that way it could be changed later too) and it would not require a `photo.album.photos` call to find the count because the check would be on Album instead of Photo
-* the way to get photos to be added to multiple albums involves "permit `id: []` "
-* Create a status OpenStruct in the AverageDate service and return it and then log it
-* Could allow the "AverageDateService" to calculate for videos as well (maybe photos _and_ videos are used to calculate average date)
+ * the way that I validate <= 60 photos per album couples it with the validation for album association. I might put an actual attribute on the Album itself that is "photo limit" (that way it could be changed later too) and it would not require a `photo.album.photos` call to find the count because the check would be on Album instead of Photo (source: http://stackoverflow.com/questions/8153051/rails-how-to-limit-number-of-items-in-has-many-association-from-parent)
+ * the way to get photos to be added to multiple albums involves "permit `id: []` "
+ * Create a status OpenStruct in the AverageDate service and return it and then log it
+ * Could allow the "AverageDateService" to calculate for videos as well (maybe photos _and_ videos are used to calculate average date)
+ * I did the first bonus, but not the second one.

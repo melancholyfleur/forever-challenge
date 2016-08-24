@@ -17,4 +17,12 @@ Rails.application.routes.draw do
       delete '/' => 'photos#destroy'
     end
   end
+  scope 'videos' do
+    get '/' => 'videos#index'
+    post '/' => 'videos#create'
+    scope '/:id' do
+      get '/' => 'videos#show'
+      delete '/' => 'videos#destroy'
+    end
+  end
 end

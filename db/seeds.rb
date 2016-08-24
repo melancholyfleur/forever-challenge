@@ -10,4 +10,13 @@
       taken_at: Time.now - rand(100).days
     )
   end
+
+  50.times do |video_index|
+    album.videos.create(
+      name: Faker::Lorem.word.capitalize,
+      description: Faker::Lorem.sentence,
+      url: Faker::File.file_name(SecureRandom.hex, 'mp4'),
+      taken_at: Time.now - rand(100).days
+    )
+  end
 end

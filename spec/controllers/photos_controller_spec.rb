@@ -14,18 +14,18 @@ RSpec.describe PhotosController, type: :controller do
       end
     end
 
-    it "lists a max of 10 albums per page" do
+    it "lists a max of 10 photos per page" do
       get :index, page: 1
       expect(JSON.parse(response.body)['photos'].count).to eq 10
     end
 
-    it "shows next page of albums upon request" do
+    it "shows next page of photos upon request" do
       get :index, page: 2
       expect(response.body).to_not be nil
       expect(JSON.parse(response.body)['photos'].count).to eq 10
     end
 
-    it "shows the total number of albums" do
+    it "shows the total number of photos" do
       get :index, page: 2
       expect(JSON.parse(response.body)['total']).to eq 20
     end
@@ -60,32 +60,38 @@ RSpec.describe PhotosController, type: :controller do
         [{
           name: "Rose", 
           url: "http://placekitten.com/rose.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         },
         {
           name: "Mr. Universe", 
           url: "http://placekitten.com/greg.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         },
         {
           name: "Stephen", 
           url: "http://placekitten.com/rosequartz.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         },
         {
           name: "Amethyst", 
           url: "http://placekitten.com/amethyst.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         },
         {
           name: "Pearl", 
           url: "http://placekitten.com/pearl.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         },
         {
           name: "Garnet", 
           url: "http://placekitten.com/garnet.jpg", 
-          album_id: @album.id 
+          album_id: @album.id,
+          taken_at: Time.now - rand(100).days
         }]
       }
       post :create, multiple_photo_params
@@ -148,7 +154,7 @@ RSpec.describe PhotosController, type: :controller do
   end
 
   describe "destroy" do
-    it "removes existing album" do
+    it "removes existing photo" do
       album = Album.create(name: Faker::Lorem.word.capitalize)
       prev_date = album.average_date
       photo = album.photos.create(
@@ -165,8 +171,7 @@ RSpec.describe PhotosController, type: :controller do
       )
       photo_count = Photo.count
       delete :destroy, id: photo.id
-      expect(response.status).to eq 200
-      expect(Photo.count).to eq photo_count-1
+      expect(Photo.count).to be photo_count-1
       expect(album.reload.average_date).not_to eql prev_date
     end
   end
