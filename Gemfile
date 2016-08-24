@@ -21,5 +21,5 @@ end
 
 group :development, :test do
   gem 'byebug'
-  gem 'faker'
+  gem 'faker', github: 'stympy/faker'
 end
