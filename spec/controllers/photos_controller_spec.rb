@@ -37,16 +37,80 @@ RSpec.describe PhotosController, type: :controller do
     end
 
     it "creates a photo with the correct parameters" do
-      valid_params = {photo: {name: "Super Duper", url: "http://placekitten.com/derp.jpg", album_id: @album.id}}
+      valid_params = {photos: [{name: "Super Duper", url: "http://placekitten.com/derp.jpg", album_id: @album.id}]}
       post :create, valid_params
       expect(Photo.first.name).to eq "Super Duper"
+      expect(JSON.parse(response.body)['photos']).to_not be nil
+      expect(JSON.parse(response.body)['errors']).to be_empty
     end
 
     it "does not create a photo if not all parameters are present" do
-      invalid_params = {photo: {name: "", url: "", album_id: @album.id}}
+      invalid_params = {photos: [{name: "", url: "", album_id: @album.id}]}
       post :create, invalid_params
       expect(Photo.first).to be nil
-      expect(response.body).to include "error"
+      expect(JSON.parse(response.body)['errors']).to_not be_empty
+    end
+
+    it "adds multiple photos to an album at one time" do
+      multiple_photo_params = {
+        photos: 
+        [{
+          name: "Rose", 
+          url: "http://placekitten.com/rose.jpg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Mr. Universe", 
+          url: "http://placekitten.com/greg.jpg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Stephen", 
+          url: "http://placekitten.com/rosequartz.jpg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Amethyst", 
+          url: "http://placekitten.com/amethyst.jpg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Pearl", 
+          url: "http://placekitten.com/pearl.jpg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Garnet", 
+          url: "http://placekitten.com/garnet.jpg", 
+          album_id: @album.id 
+        }]
+      }
+      post :create, multiple_photo_params
+      expect(@album.photos.count).to eq 6
+    end
+
+    it "adds all photos with valid json, but not photos with invalid json" do
+      multiple_photo_params = {
+        photos: 
+        [{
+          name: "Raj Al Ghoul", 
+          url: "http://placekitten.com/raj.jpeg", 
+          album_id: @album.id 
+        },
+        {
+          name: "Talia Al Ghoul", 
+          url: "http://placekitten.com/talia.alghoul", 
+          album_id: @album.id 
+        },
+        {
+          name: "Batman", 
+          url: "http://placekitten.com/bruce.jpg", 
+          album_id: @album.id 
+        }]
+      }
+      post :create, multiple_photo_params
+      expect(@album.photos.count).to eq 2
+      expect(JSON.parse(response.body)['errors']).to_not be_empty
     end
   end
 
@@ -64,12 +128,15 @@ RSpec.describe PhotosController, type: :controller do
       valid_params = {id: @photo.id, photo: { name: "The Dude Abides"}}
       post :update, valid_params
       expect(Photo.first.name).to eq "The Dude Abides"
+      expect(JSON.parse(response.body)['photo']).to_not be nil
+      expect(JSON.parse(response.body)['error']).to be nil
     end
 
     it "does not update name attribute if parameter is blank" do
       invalid_params = {id: @photo.id, photo:{ name: ""}}
       put :update, invalid_params
-      expect(response.body).to include "error"
+      expect(JSON.parse(response.body)['photo']).to be nil
+      expect(JSON.parse(response.body)['error']).to_not be nil
     end
   end
 
